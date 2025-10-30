@@ -4,7 +4,7 @@ import type { Post, Tag } from '../types';
 import PostCard from '../components/PostCard';
 import { Link } from 'react-router-dom';
 import TagFilter from '../components/TagFilter';
-
+//prueba daniel
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [commentsCount, setCommentsCount] = useState<Record<number, number>>({});
