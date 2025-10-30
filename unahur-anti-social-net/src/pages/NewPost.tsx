@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../api';
 import type { Tag } from '../types';
 import { useAuth } from '../context/AuthContext';
+import { Container, Card, Form, Button, Spinner, Alert, Row, Col } from 'react-bootstrap';
 
 export default function NewPost() {
   const { user } = useAuth();
   const nav = useNavigate();
-
   const [description, setDescription] = useState('');
   const [imageUrls, setImageUrls] = useState<string[]>(['']);
   const [tags, setTags] = useState<Tag[]>([]);
@@ -22,7 +22,6 @@ export default function NewPost() {
   const addImageField = () => setImageUrls((prev) => [...prev, '']);
   const updateImage = (idx: number, val: string) =>
     setImageUrls((prev) => prev.map((v, i) => (i === idx ? val : v)));
-
   const toggleTag = (id: number) =>
     setSelectedTagIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -56,61 +55,63 @@ export default function NewPost() {
   };
 
   return (
-    <div className="container narrow">
-      <h1>Nueva publicación</h1>
+    <Container className="py-4">
+      <Card className="p-4 shadow-sm">
+        <h2 className="fw-bold mb-3">Nueva publicación</h2>
+        {error && <Alert variant="danger">{error}</Alert>}
 
-      <form onSubmit={submit} className="form">
-        <label>
-          Descripción
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-        </label>
-
-        <fieldset>
-          <legend>Imágenes (URLs opcionales)</legend>
-
-          {imageUrls.map((val, idx) => (
-            <input
-              key={idx}
-              placeholder="https://…"
-              value={val}
-              onChange={(e) => updateImage(idx, e.target.value)}
+        <Form onSubmit={submit}>
+          <Form.Group className="mb-3">
+            <Form.Label>Descripción</Form.Label>
+            <Form.Control
+              as="textarea"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              required
             />
-          ))}
+          </Form.Group>
 
-          <button type="button" className="btn secondary" onClick={addImageField}>
-            + Agregar otra URL
-          </button>
-        </fieldset>
-
-        <fieldset>
-          <legend>Etiquetas</legend>
-          <div className="tags">
-            {tags.map((t) => (
-              <label
-                key={t.id}
-                className={selectedTagIds.includes(t.id) ? 'tag selected' : 'tag'}
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedTagIds.includes(t.id)}
-                  onChange={() => toggleTag(t.id)}
-                />{' '}
-                #{t.name}
-              </label>
+          <Form.Group className="mb-3">
+            <Form.Label>Imágenes (URLs opcionales)</Form.Label>
+            {imageUrls.map((val, idx) => (
+              <Form.Control
+                key={idx}
+                className="mb-2"
+                placeholder="https://…"
+                value={val}
+                onChange={(e) => updateImage(idx, e.target.value)}
+              />
             ))}
+            <Button variant="outline-secondary" onClick={addImageField}>
+              + Agregar otra URL
+            </Button>
+          </Form.Group>
+
+          <Form.Group className="mb-4">
+            <Form.Label>Etiquetas</Form.Label>
+            <Row>
+              {tags.map((t) => (
+                <Col xs={6} sm={4} md={3} key={t.id}>
+                  <Form.Check
+                    type="checkbox"
+                    id={`tag-${t.id}`}
+                    label={`#${t.name}`}
+                    checked={selectedTagIds.includes(t.id)}
+                    onChange={() => toggleTag(t.id)}
+                  />
+                </Col>
+              ))}
+            </Row>
+          </Form.Group>
+
+          <div className="d-grid">
+            <Button type="submit" variant="primary" disabled={loading}>
+              {loading ? <Spinner animation="border" size="sm" /> : 'Publicar'}
+            </Button>
           </div>
-        </fieldset>
-
-        <button className="btn" disabled={loading} type="submit">
-          {loading ? 'Publicando…' : 'Publicar'}
-        </button>
-
-        {error && <p className="error">{error}</p>}
-      </form>
-    </div>
+        </Form>
+      </Card>
+    </Container>
   );
 }

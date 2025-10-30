@@ -1,28 +1,24 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../api';
+import { Container, Card, Form, Button, Spinner, Alert } from 'react-bootstrap';
 
 export default function Register() {
   const nav = useNavigate();
-
-  // Estados de los campos
   const [nickName, setNickName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1️⃣ Validaciones básicas
     if (!nickName.trim() || !email.trim() || !password.trim()) {
       setError('Todos los campos son obligatorios');
       return;
     }
 
-    // Validación de formato de email simple
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
       setError('El correo electrónico no es válido');
@@ -31,19 +27,14 @@ export default function Register() {
 
     setError(null);
     setLoading(true);
-
     try {
-      // 2️⃣ Crear usuario en el backend
       await api.createUser({
         nickName: nickName.trim(),
         email: email.trim(),
         password: password.trim(),
       });
-
-      // 3️⃣ Redirigir al login después del registro
       nav('/login');
     } catch (e: any) {
-      // 4️⃣ Mostrar mensaje de error real del backend
       setError(e.message || 'No se pudo crear el usuario');
     } finally {
       setLoading(false);
@@ -51,52 +42,59 @@ export default function Register() {
   };
 
   return (
-    <div className="container narrow">
-      <h1>Registro</h1>
+    <Container className="d-flex justify-content-center align-items-center min-vh-100">
+      <Card className="p-4 shadow-sm" style={{ width: '100%', maxWidth: '420px' }}>
+        <Card.Body>
+          <h2 className="text-center mb-4 fw-bold">Crear cuenta</h2>
 
-      <form onSubmit={submit} className="form" noValidate>
-        <label>
-          NickName
-          <input
-            value={nickName}
-            onChange={(e) => setNickName(e.target.value)}
-            required
-            placeholder="tu_nick"
-          />
-        </label>
+          {error && <Alert variant="danger">{error}</Alert>}
 
-        <label>
-          Email
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="tu@email.com"
-          />
-        </label>
+          <Form onSubmit={submit}>
+            <Form.Group className="mb-3">
+              <Form.Label>NickName</Form.Label>
+              <Form.Control
+                value={nickName}
+                onChange={(e) => setNickName(e.target.value)}
+                required
+                placeholder="tu_nick"
+              />
+            </Form.Group>
 
-        <label>
-          Contraseña
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="mínimo 6 caracteres"
-          />
-        </label>
+            <Form.Group className="mb-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="tu@email.com"
+              />
+            </Form.Group>
 
-        <button className="btn" disabled={loading} type="submit">
-          {loading ? 'Creando…' : 'Crear cuenta'}
-        </button>
+            <Form.Group className="mb-4">
+              <Form.Label>Contraseña</Form.Label>
+              <Form.Control
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="mínimo 6 caracteres"
+              />
+            </Form.Group>
 
-        {error && <p className="error">{error}</p>}
-      </form>
+            <div className="d-grid">
+              <Button variant="primary" type="submit" disabled={loading}>
+                {loading ? <Spinner animation="border" size="sm" /> : 'Crear cuenta'}
+              </Button>
+            </div>
+          </Form>
 
-      <p>
-        ¿Ya tenés cuenta? <Link to="/login">Iniciá sesión</Link>
-      </p>
-    </div>
+          <div className="text-center mt-3">
+            <span className="text-muted">¿Ya tenés cuenta? </span>
+            <Link to="/login">Iniciá sesión</Link>
+          </div>
+        </Card.Body>
+      </Card>
+    </Container>
   );
 }
