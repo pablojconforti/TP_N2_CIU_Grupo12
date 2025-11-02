@@ -1,0 +1,87 @@
+.post-card {
+    background: var(--card);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.post-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.post-image-container {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.post-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.post-image-container:hover .post-image {
+    transform: scale(1.05);
+}
+
+.post-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+.post-image-container:hover .post-overlay {
+    opacity: 1;
+}
+
+.overlay-icons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.1rem;
+}
+
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.post-card .card-body {
+    padding: 1rem 1.25rem;
+}
+
+.post-card .fw-semibold {
+    color: var(--acc);
+}
+
+.post-card .text-muted {
+    color: var(--muted) !important;
+}
+
+.post-card .user-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+}
+
+@media (max-width: 768px) {
+    .post-image-container {
+        height: 250px;
+    }
+}

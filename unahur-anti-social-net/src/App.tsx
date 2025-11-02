@@ -15,7 +15,6 @@ import './styles.css';
 export default function App() {
     return (
         <AuthProvider>
-            <BrowserRouter>
                 <NavbarApp />
 
                 <main>
@@ -44,7 +43,6 @@ export default function App() {
                 </main>
 
                 <FooterApp />
-            </BrowserRouter>
         </AuthProvider>
     );
 }

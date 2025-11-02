@@ -1,17 +1,16 @@
-// src/pages/Home.tsx
-import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Container, Row, Col, Button, Spinner, Card, Stack } from 'react-bootstrap';
-import { api } from '../api';
-import type { Post, Tag } from '../types';
-import PostCard from '../components/PostCard';
-import TagFilter from '../components/TagFilter';
+import { useEffect, useMemo, useState } from "react";
+import { Container, Card, Stack, Spinner } from "react-bootstrap";
+import { api } from "../api";
+import type { Post, Tag } from "../types";
+import PostCard from "../components/PostCard";
+import TagFilter from "../components/TagFilter";
+import HeroBanner from "../components/HeroBanner";
 
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [commentsCount, setCommentsCount] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(true);
-  const [selectedTag, setSelectedTag] = useState<number | 'all'>('all');
+  const [selectedTag, setSelectedTag] = useState<number | "all">("all");
 
   useEffect(() => {
     (async () => {
@@ -22,7 +21,6 @@ export default function Home() {
           ...p,
           tags: p.tags ?? p.Tags ?? [],
         })) as Post[];
-
         setPosts(normalized);
 
         const entries = await Promise.all(
@@ -42,8 +40,10 @@ export default function Home() {
   }, []);
 
   const filtered = useMemo(() => {
-    if (selectedTag === 'all') return posts;
-    return posts.filter((p: any) => (p.tags ?? []).some((t: Tag) => t.id === selectedTag));
+    if (selectedTag === "all") return posts;
+    return posts.filter((p: any) =>
+      (p.tags ?? []).some((t: Tag) => t.id === selectedTag)
+    );
   }, [posts, selectedTag]);
 
   if (loading) {
@@ -58,63 +58,45 @@ export default function Home() {
   }
 
   return (
-    <Container className="py-4">
-      {/* Hero */}
-      <Card className="bg-light border-0 rounded-4 p-4 mb-4">
-        <Card.Body className="text-center">
-          <h1 className="display-6 fw-bold mb-2">UnaHur Anti-Social Net</h1>
-          <p className="text-muted mb-4">Vení, hacete amigo que no mordemos.</p>
-          <Stack direction="horizontal" gap={2} className="justify-content-center">
-            <Button as={Link} to="/new" variant="primary">
-              Crear post
-            </Button>
-            <Button as={Link} to="/profile" variant="outline-secondary">
-              Mi perfil
-            </Button>
-          </Stack>
-        </Card.Body>
-      </Card>
+    <>
+      <HeroBanner />
 
-      {/* Tag filter */}
-      <Card className="border-0 shadow-sm rounded-4 mb-4">
-        <Card.Body>
-          <Stack direction="horizontal" className="justify-content-between flex-wrap gap-3">
+      <Container className="py-4">
+        <Card className="card-glass p-3 mb-4">
+          <Stack
+            direction="horizontal"
+            className="justify-content-between flex-wrap gap-3"
+          >
             <h2 className="h5 m-0">Etiquetas</h2>
-            {/* TagFilter trae /tags internamente; si no, lo ajustamos */}
             <TagFilter selected={selectedTag} onChange={setSelectedTag} />
           </Stack>
-        </Card.Body>
-      </Card>
+        </Card>
 
-      {/* Posts grid */}
-      <div className="d-flex align-items-center justify-content-between mb-3">
-        <h2 className="h5 m-0">Publicaciones recientes</h2>
-        <span className="text-muted small">
-          {filtered.length} {filtered.length === 1 ? 'resultado' : 'resultados'}
-        </span>
-      </div>
+        <div className="d-flex align-items-center justify-content-between mb-3">
+          <h2 className="h5 m-0">Publicaciones recientes</h2>
+          <span className="text-muted small">
+            {filtered.length} {filtered.length === 1 ? "resultado" : "resultados"}
+          </span>
+        </div>
 
-      <Row xs={1} sm={2} lg={3} className="g-3">
-        {filtered.map((post: any) => (
-          <Col key={post.id}>
-            {/* Si tu PostCard ya renderiza su propia card, perfecto.
-                Si no, podrías envolverlo con <Card> acá. */}
+        <div className="posts-grid">
+          {filtered.map((post: any) => (
             <PostCard
+              key={post.id}
               post={post}
               tags={post.tags}
               commentsCount={commentsCount[post.id] || 0}
             />
-          </Col>
-        ))}
-      </Row>
-
-      {filtered.length === 0 && (
-        <Card className="border-0 shadow-sm rounded-4 mt-3">
-          <Card.Body className="text-center text-muted">
-            No hay publicaciones para la etiqueta seleccionada.
-          </Card.Body>
-        </Card>
-      )}
-    </Container>
+          ))}
+        </div>
+        {filtered.length === 0 && (
+          <Card className="card-glass mt-3">
+            <Card.Body className="text-center text-muted">
+              No hay publicaciones para la etiqueta seleccionada.
+            </Card.Body>
+          </Card>
+        )}
+      </Container>
+    </>
   );
 }

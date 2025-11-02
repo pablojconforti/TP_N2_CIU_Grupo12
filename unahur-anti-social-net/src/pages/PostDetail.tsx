@@ -3,7 +3,19 @@ import { useParams } from 'react-router-dom';
 import { api } from '../api';
 import type { Comment, Post, PostImage, Tag } from '../types';
 import { useAuth } from '../context/AuthContext';
-import { Container, Card, Form, Button, Spinner, Alert, ListGroup, Image } from 'react-bootstrap';
+import {
+  Container,
+  Card,
+  Form,
+  Button,
+  Spinner,
+  Alert,
+  ListGroup,
+  Image,
+  Carousel,
+  Stack,
+  Badge,
+} from 'react-bootstrap';
 
 export default function PostDetail() {
   const { id } = useParams();
@@ -64,52 +76,65 @@ export default function PostDetail() {
         <Spinner animation="border" />
       </Container>
     );
-  if (error) return <Alert variant="danger" className="m-4">{error}</Alert>;
+  if (error)
+    return (
+      <Alert variant="danger" className="m-4">
+        {error}
+      </Alert>
+    );
   if (!post) return <p>No encontrada</p>;
 
   return (
     <Container className="py-4">
-      <Card className="mb-4 p-3 shadow-sm">
+      <Card className="card-glass mb-4 p-3">
         <h3 className="fw-bold mb-3">Post #{post.id}</h3>
-        <p>{post.description}</p>
+        <Card.Text className="mb-3" style={{ whiteSpace: 'pre-wrap' }}>
+          {post.description}
+        </Card.Text>
 
         {tags.length > 0 && (
-          <div className="mb-3">
+          <Stack direction="horizontal" gap={2} className="flex-wrap mb-3">
             {tags.map((t) => (
-              <span key={t.id} className="badge bg-secondary me-1">
+              <Badge key={t.id} bg="" className="badge-soft">
                 #{t.name}
-              </span>
+              </Badge>
             ))}
-          </div>
+          </Stack>
         )}
 
         {images.length > 0 && (
-          <div className="d-flex flex-wrap gap-2">
+          <Carousel variant="dark" className="rounded overflow-hidden">
             {images.map((img) => (
-              <Image
-                key={img.id}
-                src={img.url}
-                alt="post"
-                thumbnail
-                style={{ maxHeight: 200 }}
-              />
+              <Carousel.Item key={img.id}>
+                <div
+                  className="d-flex justify-content-center"
+                  style={{ background: 'rgba(0,0,0,.2)' }}
+                >
+                  <Image
+                    src={img.url}
+                    alt="post"
+                    style={{ maxHeight: 420, objectFit: 'contain' }}
+                  />
+                </div>
+              </Carousel.Item>
             ))}
-          </div>
+          </Carousel>
         )}
       </Card>
 
-      <Card className="p-3 shadow-sm">
-        <h5>Comentarios ({comments.length})</h5>
+      <Card className="card-glass p-3">
+        <h5 className="mb-3">Comentarios ({comments.length})</h5>
         <Form onSubmit={submit} className="mb-3">
           <Form.Control
             as="textarea"
+            className="input-soft"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Escribí tu comentario…"
             rows={2}
           />
           <div className="d-flex justify-content-end mt-2">
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" className="btn-gradient btn-pill">
               Publicar
             </Button>
           </div>
@@ -117,13 +142,21 @@ export default function PostDetail() {
 
         <ListGroup variant="flush">
           {comments.map((c) => (
-            <ListGroup.Item key={c.id}>
+            <ListGroup.Item
+              key={c.id}
+              className="bg-transparent text-light"
+              style={{ borderColor: 'var(--border)' }}
+            >
               <strong>{c.User?.nickName || `Usuario #${c.UserId}`}</strong>: {c.content}
             </ListGroup.Item>
           ))}
         </ListGroup>
 
-        {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+        {error && (
+          <Alert variant="danger" className="mt-3">
+            {error}
+          </Alert>
+        )}
       </Card>
     </Container>
   );

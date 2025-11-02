@@ -42,59 +42,85 @@ export default function Register() {
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center min-vh-100">
-      <Card className="p-4 shadow-sm" style={{ width: '100%', maxWidth: '420px' }}>
-        <Card.Body>
-          <h2 className="text-center mb-4 fw-bold">Crear cuenta</h2>
+    <div
+      className="py-5"
+      style={{
+        background:
+          'linear-gradient(135deg, rgba(139,92,246,.15), rgba(34,211,238,.12))',
+        minHeight: 'calc(100vh - 120px)',
+      }}
+    >
+      <Container className="d-flex justify-content-center align-items-center">
+        <Card
+          className="card-glass p-4 shadow-sm"
+          style={{ width: '100%', maxWidth: 480 }}
+        >
+          <Card.Body>
+            <h2 className="text-center mb-4 fw-bold">Crear cuenta</h2>
 
-          {error && <Alert variant="danger">{error}</Alert>}
+            {error && <Alert variant="danger">{error}</Alert>}
 
-          <Form onSubmit={submit}>
-            <Form.Group className="mb-3">
-              <Form.Label>NickName</Form.Label>
-              <Form.Control
-                value={nickName}
-                onChange={(e) => setNickName(e.target.value)}
-                required
-                placeholder="tu_nick"
-              />
-            </Form.Group>
+            <Form onSubmit={submit}>
+              <Form.Group className="mb-3">
+                <Form.Label>NickName</Form.Label>
+                <Form.Control
+                  className="input-soft"
+                  value={nickName}
+                  onChange={(e) => setNickName(e.target.value)}
+                  required
+                  placeholder="tu_nick"
+                />
+              </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="tu@email.com"
-              />
-            </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  className="input-soft"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="tu@email.com"
+                />
+              </Form.Group>
 
-            <Form.Group className="mb-4">
-              <Form.Label>Contraseña</Form.Label>
-              <Form.Control
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="mínimo 6 caracteres"
-              />
-            </Form.Group>
+              <Form.Group className="mb-4">
+                <Form.Label>Contraseña</Form.Label>
+                <Form.Control
+                  className="input-soft"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="mínimo 6 caracteres"
+                />
+              </Form.Group>
 
-            <div className="d-grid">
-              <Button variant="primary" type="submit" disabled={loading}>
-                {loading ? <Spinner animation="border" size="sm" /> : 'Crear cuenta'}
-              </Button>
+              <div className="d-grid">
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={loading}
+                  className="btn-gradient btn-pill"
+                >
+                  {loading ? (
+                    <>
+                      <Spinner animation="border" size="sm" /> Creando…
+                    </>
+                  ) : (
+                    'Crear cuenta'
+                  )}
+                </Button>
+              </div>
+            </Form>
+
+            <div className="text-center mt-3">
+              <span className="text-muted">¿Ya tenés cuenta? </span>
+              <Link to="/login">Iniciá sesión</Link>
             </div>
-          </Form>
-
-          <div className="text-center mt-3">
-            <span className="text-muted">¿Ya tenés cuenta? </span>
-            <Link to="/login">Iniciá sesión</Link>
-          </div>
-        </Card.Body>
-      </Card>
-    </Container>
+          </Card.Body>
+        </Card>
+      </Container>
+    </div>
   );
 }

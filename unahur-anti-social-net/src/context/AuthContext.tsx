@@ -21,7 +21,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 const [user, setUser] = useState<User | null>(null);
 
 
-// Rehidratar desde localStorage
 useEffect(() => {
 const raw = localStorage.getItem(STORAGE_KEY);
 if (raw) setUser(JSON.parse(raw));
@@ -29,7 +28,6 @@ if (raw) setUser(JSON.parse(raw));
 
 
 const login = async (nickName: string, password: string) => {
-// Contraseña fija simulada
 if (password !== '123456') throw new Error('Contraseña inválida');
 
 

@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+:root {
+    --acc: #7c3aed;
+    --acc2: #ec4899;
+    --acc3: #06b6d4;
+}
+
+
+html,
+body,
+#root {
+    height: 100%;
+}
+
+body {
+    background:
+        radial-gradient(1200px 800px at 20% -10%, rgba(123, 47, 247, 0.14), transparent),
+        radial-gradient(1200px 800px at 120% 30%, rgba(255, 77, 109, 0.14), transparent),
+        var(--bg);
+    color: var(--fg);
+}
+
+.glass-nav {
+    backdrop-filter: saturate(140%) blur(10px);
+    background: rgba(16, 22, 38, 0.65) !important;
+    border-bottom: 1px solid var(--border);
+}
+
+[data-theme="light"] .glass-nav {
+    background: rgba(255, 255, 255, 0.65) !important;
+}
+
+
+.card-glass {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+}
+
+
+.btn-gradient {
+    border: 0;
+    color: white !important;
+    background-image: linear-gradient(90deg, var(--acc), var(--acc2), var(--acc3));
+    background-size: 200% 100%;
+    transition: transform .15s ease, background-position .3s ease;
+}
+
+.btn-gradient:hover {
+    background-position: 100% 0;
+    transform: translateY(-1px);
+}
+
+.btn-pill {
+    border-radius: 9999px;
+}
+
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.chip {
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--fg);
+    padding: .35rem .75rem;
+    font-size: .9rem;
+    cursor: pointer;
+}
+
+.chip.active {
+    outline: 2px solid var(--acc);
+}
+
+
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+}
+
+@media (min-width: 576px) {
+    .posts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+    .posts-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+
+.hero {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(34, 211, 238, 0.1));
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+}
+
+
+.input-soft {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    color: var(--fg);
+}
+
+.input-soft::placeholder {
+    color: var(--muted);
+}
+
+
+.badge-soft {
+    background: rgba(139, 92, 246, .15);
+    color: var(--fg);
+    border: 1px solid var(--border);
+}

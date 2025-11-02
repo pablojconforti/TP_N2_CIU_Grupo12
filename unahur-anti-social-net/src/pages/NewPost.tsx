@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../api';
 import type { Tag } from '../types';
 import { useAuth } from '../context/AuthContext';
-import { Container, Card, Form, Button, Spinner, Alert, Row, Col } from 'react-bootstrap';
+import { Container, Card, Form, Button, Spinner, Alert } from 'react-bootstrap';
 
 export default function NewPost() {
   const { user } = useAuth();
@@ -43,7 +43,9 @@ export default function NewPost() {
 
       const urls = imageUrls.map((u) => u.trim()).filter(Boolean);
       if (urls.length) {
-        await Promise.all(urls.map((url) => api.createPostImage({ url, postId: post.id })));
+        await Promise.all(
+          urls.map((url) => api.createPostImage({ url, postId: post.id }))
+        );
       }
 
       nav(`/post/${post.id}`);
@@ -56,7 +58,7 @@ export default function NewPost() {
 
   return (
     <Container className="py-4">
-      <Card className="p-4 shadow-sm">
+      <Card className="card-glass p-4">
         <h2 className="fw-bold mb-3">Nueva publicación</h2>
         {error && <Alert variant="danger">{error}</Alert>}
 
@@ -65,9 +67,10 @@ export default function NewPost() {
             <Form.Label>Descripción</Form.Label>
             <Form.Control
               as="textarea"
+              className="input-soft"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              rows={3}
+              rows={4}
               required
             />
           </Form.Group>
@@ -77,36 +80,45 @@ export default function NewPost() {
             {imageUrls.map((val, idx) => (
               <Form.Control
                 key={idx}
-                className="mb-2"
+                className="input-soft mb-2"
                 placeholder="https://…"
                 value={val}
                 onChange={(e) => updateImage(idx, e.target.value)}
               />
             ))}
-            <Button variant="outline-secondary" onClick={addImageField}>
+            <Button
+              variant="outline-secondary"
+              onClick={addImageField}
+              className="btn-pill"
+              type="button"
+            >
               + Agregar otra URL
             </Button>
           </Form.Group>
 
           <Form.Group className="mb-4">
             <Form.Label>Etiquetas</Form.Label>
-            <Row>
+            <div className="chips">
               {tags.map((t) => (
-                <Col xs={6} sm={4} md={3} key={t.id}>
-                  <Form.Check
-                    type="checkbox"
-                    id={`tag-${t.id}`}
-                    label={`#${t.name}`}
-                    checked={selectedTagIds.includes(t.id)}
-                    onChange={() => toggleTag(t.id)}
-                  />
-                </Col>
+                <button
+                  type="button"
+                  key={t.id}
+                  className={`chip ${selectedTagIds.includes(t.id) ? 'active' : ''
+                    }`}
+                  onClick={() => toggleTag(t.id)}
+                >
+                  #{t.name}
+                </button>
               ))}
-            </Row>
+            </div>
           </Form.Group>
 
           <div className="d-grid">
-            <Button type="submit" variant="primary" disabled={loading}>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="btn-gradient btn-pill"
+            >
               {loading ? <Spinner animation="border" size="sm" /> : 'Publicar'}
             </Button>
           </div>

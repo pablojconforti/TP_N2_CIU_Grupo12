@@ -32,7 +32,6 @@ body {
     --acc2: #8b5cf6;
 }
 
-/* Reset general */
 * {
     box-sizing: border-box;
 }
@@ -44,7 +43,6 @@ body {
     color: var(--fg);
 }
 
-/* --- Navbar --- */
 .navbar {
     background-color: #0d141f !important;
     border-bottom: 1px solid #182235 !important;
@@ -60,7 +58,6 @@ body {
     opacity: 1;
 }
 
-/* --- Containers y Cards --- */
 .container {
     color: var(--fg);
 }
@@ -73,7 +70,6 @@ body {
     color: var(--fg);
 }
 
-/* --- Botones --- */
 .btn-primary {
     background: linear-gradient(135deg, var(--acc), var(--acc2)) !important;
     border: none !important;
@@ -89,7 +85,6 @@ body {
     background-color: #1b2540 !important;
 }
 
-/* --- Formularios --- */
 .form-control,
 textarea.form-control {
     background-color: #0d1421 !important;
@@ -116,7 +111,6 @@ legend {
     color: var(--muted);
 }
 
-/* --- Badges / Tags --- */
 .badge {
     background-color: #101828 !important;
     border: 1px solid #24304b;
@@ -127,7 +121,6 @@ legend {
     background-color: #1b2540 !important;
 }
 
-/* --- Tablas --- */
 .table {
     color: var(--fg) !important;
     border-color: #1d2944 !important;
@@ -137,7 +130,6 @@ legend {
     background-color: #101826 !important;
 }
 
-/* --- Otros --- */
 .text-muted {
     color: var(--muted) !important;
 }
@@ -151,7 +143,6 @@ a:hover {
     text-decoration: underline;
 }
 
-/* --- Imagenes / Grids --- */
 .images img {
     width: 100%;
     height: 200px;
@@ -160,7 +151,6 @@ a:hover {
     border: 1px solid #1d2944;
 }
 
-/* --- Scrollbar opcional --- */
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -168,4 +158,17 @@ a:hover {
 ::-webkit-scrollbar-thumb {
     background-color: #24304b;
     border-radius: 8px;
+}
+
+.card-glass {
+    background: rgba(17, 24, 39, 0.75);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(60, 72, 100, 0.4);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+.card-glass:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
