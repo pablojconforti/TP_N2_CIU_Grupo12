@@ -124,3 +124,21 @@ body {
     color: var(--fg);
     border: 1px solid var(--border);
 }
+
+[data-theme="dark"] {
+    --bg: #121212;
+    --fg: #f8f9fa;
+    --acc: #a8d0ff;
+}
+
+[data-theme="light"] {
+    --bg: #3a6ea5;
+    --fg: #ffffff;
+    --acc: #ffffff;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--fg);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}

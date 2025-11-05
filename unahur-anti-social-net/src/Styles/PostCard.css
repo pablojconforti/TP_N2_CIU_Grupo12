@@ -85,3 +85,19 @@
         height: 250px;
     }
 }
+
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.featured-border {
+    border: 2px solid gold;
+    border-radius: 12px;
+    transition: all 0.3s ease-in-out;
+}
+
+.featured-border:hover {
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.7);
+}

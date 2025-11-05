@@ -15,25 +15,30 @@ export default function NavbarApp() {
         navigate("/login");
     };
 
+    const isDark = theme === "dark";
+
     return (
         <Navbar
             expand="md"
-            variant="dark"
             sticky="top"
             className="py-3 shadow-sm"
             style={{
                 backgroundColor: "var(--bg)",
-                borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-                transition: "background 0.3s ease",
+                transition: "background 0.3s ease, color 0.3s ease",
+                borderBottom: isDark
+                    ? "1px solid rgba(255, 255, 255, 0.1)"
+                    : "1px solid rgba(0, 0, 0, 0.1)",
             }}
         >
             <Container>
-
                 <Navbar.Brand
                     as={Link}
                     to="/"
                     className="fw-bold d-flex align-items-center gap-2"
-                    style={{ color: "var(--acc)", textDecoration: "none" }}
+                    style={{
+                        color: "white",
+                        textDecoration: "none",
+                    }}
                 >
                     <Image
                         src={logo}
@@ -52,7 +57,11 @@ export default function NavbarApp() {
                         <Nav.Link
                             as={Link}
                             to="/"
-                            className="d-flex align-items-center gap-1 text-light"
+                            className="d-flex align-items-center gap-1"
+                            style={{
+                                color: "white",
+                                fontWeight: 500,
+                            }}
                         >
                             <Home size={18} /> Inicio
                         </Nav.Link>
@@ -60,7 +69,11 @@ export default function NavbarApp() {
                         <Nav.Link
                             as={Link}
                             to="/profile"
-                            className="d-flex align-items-center gap-1 text-light"
+                            className="d-flex align-items-center gap-1"
+                            style={{
+                                color: "white",
+                                fontWeight: 500,
+                            }}
                         >
                             <User size={18} /> Perfil
                         </Nav.Link>
@@ -68,29 +81,45 @@ export default function NavbarApp() {
 
                     <div className="d-flex align-items-center gap-2">
                         <Button
-                            variant="outline-secondary"
+                            variant="outline-light"
                             size="sm"
                             onClick={toggleTheme}
-                            style={{ borderColor: "#24304b", color: "var(--fg)" }}
+                            title="Cambiar tema"
+                            style={{
+                                borderColor: "white",
+                                color: "white",
+                            }}
                         >
-                            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+                            {isDark ? <Sun size={16} /> : <Moon size={16} />}
                         </Button>
 
                         {user ? (
                             <Button
-                                variant="outline-secondary"
+                                variant="outline-light"
                                 size="sm"
                                 onClick={handleLogout}
-                                style={{ color: "var(--fg)", borderColor: "#24304b" }}
+                                style={{ borderColor: "white", color: "white" }}
                             >
                                 Cerrar sesión
                             </Button>
                         ) : (
                             <>
-                                <Button as={Link} to="/login" variant="primary" size="sm" className="me-2">
+                                <Button
+                                    as={Link}
+                                    to="/login"
+                                    variant="primary"
+                                    size="sm"
+                                    className="me-2"
+                                >
                                     Iniciar sesión
                                 </Button>
-                                <Button as={Link} to="/register" variant="outline-secondary" size="sm">
+                                <Button
+                                    as={Link}
+                                    to="/register"
+                                    variant="outline-light"
+                                    size="sm"
+                                    style={{ borderColor: "white", color: "white" }}
+                                >
                                     Registrarse
                                 </Button>
                             </>

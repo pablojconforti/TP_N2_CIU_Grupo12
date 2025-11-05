@@ -14,14 +14,18 @@ import {
     Col,
 } from "react-bootstrap";
 import PostCard from "../components/PostCard";
+import avatarDefault from "../Imagenes/avatarDefault.png";
 
 export default function Profile() {
     const { user, logout } = useAuth();
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
+    const [featured, setFeatured] = useState<number[]>([]);
     const [profileImage, setProfileImage] = useState(
-        user?.avatar || "/src/Imagenes/default-avatar.png"
+        user?.avatar || avatarDefault
     );
+
+    const storageKey = user ? `featuredPosts_${user.id}` : "featuredPosts";
 
     useEffect(() => {
         if (!user) return;
@@ -31,6 +35,27 @@ export default function Profile() {
             .finally(() => setLoading(false));
     }, [user]);
 
+    useEffect(() => {
+        if (!user) return;
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed)) setFeatured(parsed);
+            } catch {
+                setFeatured([]);
+            }
+        } else {
+            setFeatured([]);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (user) {
+            localStorage.setItem(storageKey, JSON.stringify(featured));
+        }
+    }, [featured, user]);
+
     if (!user) return null;
 
     const handleEditProfile = () => {
@@ -38,6 +63,14 @@ export default function Profile() {
         if (newUrl && newUrl.trim() !== "") {
             setProfileImage(newUrl.trim());
         }
+    };
+
+    const toggleFeatured = (postId: number) => {
+        setFeatured((prev) =>
+            prev.includes(postId)
+                ? prev.filter((id) => id !== postId)
+                : [...prev, postId]
+        );
     };
 
     return (
@@ -54,6 +87,9 @@ export default function Profile() {
                                     height: "140px",
                                     objectFit: "cover",
                                     border: "3px solid var(--acc)",
+                                }}
+                                onError={(e) => {
+                                    (e.currentTarget as HTMLImageElement).src = avatarDefault;
                                 }}
                             />
                         </div>
@@ -102,9 +138,26 @@ export default function Profile() {
                             <Alert variant="info">No publicaste nada todavía.</Alert>
                         ) : (
                             <div className="posts-grid">
-                                {posts.map((p) => (
-                                    <PostCard key={p.id} post={p} />
-                                ))}
+                                {posts.map((p) => {
+                                    const isFeatured = featured.includes(p.id);
+                                    return (
+                                        <div
+                                            key={p.id}
+                                            className={`position-relative ${isFeatured ? "featured-border" : ""
+                                                }`}
+                                        >
+                                            <PostCard post={p} />
+                                            <Button
+                                                variant={isFeatured ? "warning" : "outline-warning"}
+                                                size="sm"
+                                                className="position-absolute top-0 end-0 m-2"
+                                                onClick={() => toggleFeatured(p.id)}
+                                            >
+                                                {isFeatured ? "★ Quitar" : "☆ Destacar"}
+                                            </Button>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         )}
                     </Card>
