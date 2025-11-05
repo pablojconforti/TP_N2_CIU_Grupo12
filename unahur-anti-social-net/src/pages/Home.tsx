@@ -1,31 +1,44 @@
-import { useEffect, useMemo, useState, useRef } from "react";
-import { Container, Card, Stack, Spinner, Alert } from "react-bootstrap";
+import { useEffect, useState, useMemo, useRef } from "react";
+import { Container, Card, Stack, Spinner, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
 import { api } from "../api";
 import type { Post, Tag } from "../types";
 import PostCard from "../components/PostCard";
 import TagFilter from "../components/TagFilter";
 import HeroBanner from "../components/HeroBanner";
-import { motion } from "framer-motion";
 
 export default function Home() {
-  const [allPosts, setAllPosts] = useState<Post[]>([]);
-  const [visiblePosts, setVisiblePosts] = useState<Post[]>([]);
+  const { user } = useAuth();
+  const [posts, setPosts] = useState<Post[]>([]);
   const [commentsCount, setCommentsCount] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<number | "all">("all");
-  const [page, setPage] = useState(1);
-  const [featuredIds, setFeaturedIds] = useState<number[]>([]);
-  const postsPerPage = 6;
-  const loaderRef = useRef<HTMLDivElement | null>(null);
 
-  // === 🧠 Cargar IDs de publicaciones destacadas desde localStorage ===
-  useEffect(() => {
-    const saved = localStorage.getItem("featuredPosts");
-    if (saved) setFeaturedIds(JSON.parse(saved));
-  }, []);
+  if (!user) {
+    return (
+      <Container
+        className="py-5 text-center d-flex flex-column justify-content-center align-items-center"
+        style={{ minHeight: "80vh" }}
+      >
+        <h2 className="fw-bold mb-3">Logeate para ver qué está pasando 👀</h2>
+        <p className="text-muted mb-4">
+          Iniciá sesión para explorar las publicaciones y ver lo que comparte la comunidad.
+        </p>
+        <div className="d-flex gap-3">
+          <Button as={Link} to="/login" variant="primary" size="lg">
+            Iniciar sesión
+          </Button>
+          <Button as={Link} to="/register" variant="outline-secondary" size="lg">
+            Registrarse
+          </Button>
+        </div>
+      </Container>
+    );
+  }
 
-  // === 📥 Cargar todas las publicaciones una sola vez ===
   useEffect(() => {
     (async () => {
       try {
@@ -35,9 +48,7 @@ export default function Home() {
           ...p,
           tags: p.tags ?? p.Tags ?? [],
         })) as Post[];
-
-        setAllPosts(normalized);
-        setVisiblePosts(normalized.slice(0, postsPerPage));
+        setPosts(normalized);
 
         const entries = await Promise.all(
           normalized.map(async (post) => {
@@ -45,6 +56,7 @@ export default function Home() {
             return [post.id, comments.length] as const;
           })
         );
+
         const cc: Record<number, number> = {};
         for (const [id, count] of entries) cc[id] = count;
         setCommentsCount(cc);
@@ -54,77 +66,37 @@ export default function Home() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [user]);
 
-  // === ♾️ Scroll infinito simulado (sin repetir posts) ===
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setPage((p) => {
-            const nextPage = p + 1;
-            const nextSlice = allPosts.slice(0, nextPage * postsPerPage);
-            setVisiblePosts(nextSlice);
-            return nextPage;
-          });
-        }
-      },
-      { threshold: 1 }
-    );
-    if (loaderRef.current) observer.observe(loaderRef.current);
-    return () => observer.disconnect();
-  }, [allPosts]);
-
-  // === 🧩 Filtrado por etiqueta ===
   const filtered = useMemo(() => {
-    if (selectedTag === "all") return visiblePosts;
-    return visiblePosts.filter((p) =>
+    if (selectedTag === "all") return posts;
+    return posts.filter((p) =>
       (p.tags ?? []).some((t: Tag) => t.id === selectedTag)
     );
-  }, [visiblePosts, selectedTag]);
+  }, [posts, selectedTag]);
 
-  // === 🌟 Publicaciones destacadas (solo las elegidas en Profile) ===
-  const featured = useMemo(() => {
-    return allPosts.filter((post) => featuredIds.includes(post.id));
-  }, [allPosts, featuredIds]);
+  if (loading) {
+    return (
+      <Container className="py-5 text-center">
+        <Spinner animation="border" />
+        <p className="mt-3 fw-semibold">Cargando publicaciones...</p>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container className="py-5 text-center text-danger fw-semibold">
+        {error}
+      </Container>
+    );
+  }
 
   return (
     <>
       <HeroBanner />
 
       <Container className="py-4">
-        {error && (
-          <Alert variant="danger" onClose={() => setError(null)} dismissible>
-            {error}
-          </Alert>
-        )}
-
-        {/* 🌟 Publicaciones destacadas */}
-        {featured.length > 0 && (
-          <Card className="card-glass p-3 mb-4">
-            <h2 className="h5 mb-3">🌟 Publicaciones destacadas</h2>
-            <div className="d-flex flex-wrap gap-3">
-              {featured.map((post) => (
-                <motion.div
-                  key={post.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex-grow-1"
-                  style={{ minWidth: "250px" }}
-                >
-                  <PostCard
-                    post={post}
-                    tags={post.tags}
-                    commentsCount={commentsCount[post.id] || 0}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </Card>
-        )}
-
-        {/* Filtro de etiquetas */}
         <Card className="card-glass p-3 mb-4">
           <Stack
             direction="horizontal"
@@ -135,7 +107,6 @@ export default function Home() {
           </Stack>
         </Card>
 
-        {/* Lista de publicaciones */}
         <div className="d-flex align-items-center justify-content-between mb-3">
           <h2 className="h5 m-0">Publicaciones recientes</h2>
           <span className="text-muted small">
@@ -161,13 +132,13 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Loader infinito */}
-        {loading && (
-          <div className="text-center my-4">
-            <Spinner animation="border" />
-          </div>
+        {filtered.length === 0 && (
+          <Card className="card-glass mt-4">
+            <Card.Body className="text-center text-muted">
+              No hay publicaciones disponibles.
+            </Card.Body>
+          </Card>
         )}
-        <div ref={loaderRef} />
       </Container>
     </>
   );
