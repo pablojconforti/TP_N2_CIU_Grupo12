@@ -10,9 +10,43 @@ export default function FooterApp() {
                         <small>© {new Date().getFullYear()} <strong>UnaHur Anti-Social Net</strong> — Proyecto académico con React.</small>
                     </Col>
                     <Col md={6} className="text-center text-md-end">
-                        <a href="https://unahur.edu.ar/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--acc)', textDecoration: 'none', marginRight: '12px' }}>UNAHUR</a>
-                        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--fg)', textDecoration: 'none', marginRight: '12px' }}>GitHub</a>
-                        <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--fg)', textDecoration: 'none' }}>Twitter</a>
+                        <a
+                            href="https://unahur.edu.ar/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                                color: "var(--acc)",
+                                textDecoration: "none",
+                                marginRight: "12px",
+                            }}
+                        >
+                            UNAHUR
+                        </a>
+
+                        <a
+                            href="https://github.com/pablojconforti/TP_N2_CIU_Grupo12"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                                color: "var(--fg)",
+                                textDecoration: "none",
+                                marginRight: "12px",
+                            }}
+                        >
+                            GitHub
+                        </a>
+
+                        <a
+                            href="https://x.com/unahurlingham?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                                color: "var(--fg)",
+                                textDecoration: "none",
+                            }}
+                        >
+                            Twitter
+                        </a>
                     </Col>
                 </Row>
             </Container>

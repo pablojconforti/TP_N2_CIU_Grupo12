@@ -25,10 +25,9 @@ export default function Profile() {
         user?.avatar || avatarDefault
     );
 
-    const storageKey = user ? `featuredPosts_${user.id}` : "featuredPosts";
-
     useEffect(() => {
         if (!user) return;
+        setLoading(true);
         api
             .getPostsByUser(user.id)
             .then(setPosts)
@@ -37,26 +36,31 @@ export default function Profile() {
 
     useEffect(() => {
         if (!user) return;
-        const saved = localStorage.getItem(storageKey);
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                if (Array.isArray(parsed)) setFeatured(parsed);
-            } catch {
-                setFeatured([]);
-            }
-        } else {
+        const key = `featuredPosts_${user.id}`;
+        const saved = localStorage.getItem(key);
+
+        try {
+            setFeatured(saved ? JSON.parse(saved) : []);
+        } catch {
             setFeatured([]);
         }
     }, [user]);
 
     useEffect(() => {
         if (user) {
-            localStorage.setItem(storageKey, JSON.stringify(featured));
+            const key = `featuredPosts_${user.id}`;
+            localStorage.setItem(key, JSON.stringify(featured));
         }
     }, [featured, user]);
 
-    if (!user) return null;
+    if (!user)
+        return (
+            <Container className="py-5 text-center">
+                <Alert variant="warning" className="shadow-sm">
+                    ⚠️ <strong>Iniciá sesión</strong> para ver tu perfil y publicaciones.
+                </Alert>
+            </Container>
+        );
 
     const handleEditProfile = () => {
         const newUrl = prompt("📸 Pegá la URL de tu nueva foto de perfil:");
@@ -135,7 +139,9 @@ export default function Profile() {
                                 <Spinner animation="border" />
                             </div>
                         ) : posts.length === 0 ? (
-                            <Alert variant="info">No publicaste nada todavía.</Alert>
+                            <Alert variant="info">
+                                Todavía no tenés publicaciones.
+                            </Alert>
                         ) : (
                             <div className="posts-grid">
                                 {posts.map((p) => {
@@ -148,12 +154,18 @@ export default function Profile() {
                                         >
                                             <PostCard post={p} />
                                             <Button
-                                                variant={isFeatured ? "warning" : "outline-warning"}
+                                                variant={
+                                                    isFeatured
+                                                        ? "warning"
+                                                        : "outline-warning"
+                                                }
                                                 size="sm"
                                                 className="position-absolute top-0 end-0 m-2"
                                                 onClick={() => toggleFeatured(p.id)}
                                             >
-                                                {isFeatured ? "★ Quitar" : "☆ Destacar"}
+                                                {isFeatured
+                                                    ? "★ Quitar"
+                                                    : "☆ Destacar"}
                                             </Button>
                                         </div>
                                     );
